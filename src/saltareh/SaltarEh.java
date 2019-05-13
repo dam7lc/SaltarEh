@@ -16,13 +16,15 @@ public class SaltarEh extends JFrame{
 
     
     public SaltarEh(){
-        initUI();
+        IniciarUI();
     }
     
-    private void initUI(){
-        add(new Board());
-        //setSize(1280, 720);
+    private void IniciarUI(){
+        add(new Mundo());
         setResizable(true);
+        /*setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        setUndecorated(true);
+        setVisible(true);*/
         pack();
         setTitle("Saltar Eh!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,8 +33,8 @@ public class SaltarEh extends JFrame{
     
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
-            SaltarEh ex = new SaltarEh();
-            ex.setVisible(true);
+            SaltarEh Juego = new SaltarEh();
+            Juego.setVisible(true);
         });
     }
     

@@ -1,61 +1,64 @@
 package saltareh;
 
-import java.awt.BasicStroke;
+import controles.ControlJugador;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 
-public class Board extends JPanel implements Runnable {
+public class Mundo extends JPanel implements Runnable {
     
     private final int B_WIDTH = 1280;
     private final int B_HEIGHT = 720;
     private final int INITIAL_X = 1280/2;
     private final int INITIAL_Y = 720;
     private final int DELAY = 25;
-    
+    ControlJugador  ctrlJugador;
+   
     private Thread animator;
-    private Player Jugador;
     
-    public Board(){
-        initBoard();
+    public Mundo(){
+        IniciarMundo();
     }
     
-    private void initBoard(){
+    private void IniciarMundo(){
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
+        ctrlJugador = new ControlJugador(INITIAL_X, INITIAL_Y, B_WIDTH, B_HEIGHT);
         loadImage();
-        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "MoverIzq");
-        getActionMap().put("MoverIzq", moverIzq); 
-        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "MoverDer");
-        getActionMap().put("MoverDer", moverDer); 
-        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), "MoverIzqSoltado");
-        getActionMap().put("MoverIzqSoltado", moverIzqSoltado); 
-        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "MoverDerSoltado");
-        getActionMap().put("MoverDerSoltado", moverDerSoltado); 
+        ConfigurarControles();
+        
         //int w = jugadorImg.getWidth(this);
         //int h = jugadorImg.getHeight(this);
         //setPreferredSize(new Dimension(h,w));
   
         //this.get
-        Jugador = new Player(INITIAL_X, INITIAL_Y, B_WIDTH, B_HEIGHT);
         
+        
+    }
+    
+    private void ConfigurarControles(){
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "MoverIzq");
+        getActionMap().put("MoverIzq", ctrlJugador.moverIzq); 
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "MoverDer");
+        getActionMap().put("MoverDer", ctrlJugador.moverDer); 
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0), "MoverIzq");
+        getActionMap().put("MoverIzq", ctrlJugador.moverIzq); 
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0), "MoverDer");
+        getActionMap().put("MoverDer", ctrlJugador.moverDer); 
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), "MoverIzqSoltado");
+        getActionMap().put("MoverIzqSoltado", ctrlJugador.moverIzqSoltado); 
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "MoverDerSoltado");
+        getActionMap().put("MoverDerSoltado", ctrlJugador.moverDerSoltado); 
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), "MoverIzqSoltado");
+        getActionMap().put("MoverIzqSoltado", ctrlJugador.moverIzqSoltado); 
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), "MoverDerSoltado");
+        getActionMap().put("MoverDerSoltado", ctrlJugador.moverDerSoltado); 
     }
     
     @Override
@@ -76,41 +79,14 @@ public class Board extends JPanel implements Runnable {
     }
     
     private void drawImage(Graphics g){
-        Jugador.Dibujar(g);
+        ctrlJugador.Dibujar(g);
         Toolkit.getDefaultToolkit().sync();
     }
     
-    Action moverIzq = new AbstractAction(){
-        @Override
-        public void actionPerformed(ActionEvent e){
-            Jugador.setbSeMueveIzquierda(true);
-        }
-    };
     
-    Action moverDer = new AbstractAction(){
-        @Override
-        public void actionPerformed(ActionEvent e){
-            Jugador.setbSeMueveDerecha(true);
-        }
-    };
-    
-    Action moverIzqSoltado = new AbstractAction(){
-        @Override
-        public void actionPerformed(ActionEvent e){
-            Jugador.setbSeMueveIzquierda(false);
-        }
-    };
-    
-    Action moverDerSoltado = new AbstractAction(){
-        @Override
-        public void actionPerformed(ActionEvent e){
-            Jugador.setbSeMueveDerecha(false);
-        }
-    };
     
     private void cycle(){
-        Jugador.Saltar();
-        Jugador.Mover();
+        ctrlJugador.Mover();
     }
     
     @Override
