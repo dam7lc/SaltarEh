@@ -5,6 +5,8 @@
  */
 package elementos;
 
+import java.awt.Image;
+
 /**
  *
  * @author dam7lc
@@ -12,8 +14,8 @@ package elementos;
 public class Player extends Elemento {
     
 
-    public Player(int x, int y, int ancho, int altura) {
-        super(x, y, ancho, altura, "src/resources/Doodle.png");
+    public Player(int x, int y, String img, int ancho, int alto) {
+        super(x,y,img, ancho, alto);
     }
     
     

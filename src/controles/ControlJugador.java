@@ -5,10 +5,12 @@
  */
 package controles;
 
+import elementos.Elemento;
 import elementos.Player;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -16,10 +18,17 @@ import javax.swing.Action;
  */
 public class ControlJugador extends Controlador{
     
+    private int m_intVelocidadCaida;
     
     
     public ControlJugador(int anchoVentana, int alturaVentana){
-        m_elementoMarioneta = new Player(anchoVentana/2, alturaVentana, anchoVentana, alturaVentana);
+        
+        m_elementoMarioneta = new Elemento(anchoVentana/2, 
+                alturaVentana, 
+                "src/resources/Doodle.png", 
+                anchoVentana/20, 
+                anchoVentana/20
+        );
         m_intAnchoVentana = anchoVentana;
         m_intAltoVentana = alturaVentana;
     }
@@ -28,10 +37,10 @@ public class ControlJugador extends Controlador{
     public void Mover(){
         MovimientoDeSalto();
         if(m_bSeMueveDerecha){
-            m_elementoMarioneta.addCx(15);
+            m_elementoMarioneta.addCx(m_intAnchoVentana/91);
         }
         if(m_bSeMueveIzquierda){
-            m_elementoMarioneta.addCx(-15);
+            m_elementoMarioneta.addCx(-(m_intAnchoVentana/91));
         }
         if(m_elementoMarioneta.getCx() > m_intAnchoVentana){
             m_elementoMarioneta.setCx(0);
@@ -42,15 +51,16 @@ public class ControlJugador extends Controlador{
     }
     
     public void MovimientoDeSalto(){
+        m_intVelocidadCaida = m_elementoMarioneta.getCy()/32;
         if(m_bEstaCayendo)  {
-            m_elementoMarioneta.addCy(7);
+            m_elementoMarioneta.addCy(m_intVelocidadCaida);
         }  
         else{
-            m_elementoMarioneta.addCy(-7);
+            m_elementoMarioneta.addCy(-(m_intVelocidadCaida));
         }
-        if(m_elementoMarioneta.getCy() < ((m_intAltoVentana/3)-45)){
+        if(m_elementoMarioneta.getCy() < ((m_intAltoVentana/3)-(m_elementoMarioneta.getSprite().getHeight(null)/2))){
             m_bEstaCayendo = true;
-        } else if(m_elementoMarioneta.getCy() > m_intAltoVentana-95){
+        } else if(m_elementoMarioneta.getCy() > m_intAltoVentana-m_elementoMarioneta.getSprite().getHeight(null)){
             m_bEstaCayendo = false;
         }
     }

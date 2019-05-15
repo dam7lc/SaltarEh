@@ -1,39 +1,54 @@
 package saltareh;
 
 import controles.ControlJugador;
+import elementos.Elemento;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import ui.MenuPrincipal;
 
 
 public class Mundo extends JPanel implements Runnable {
     private final int m_intDelay = 25;
     private final int m_intAnchoVentana;
     private final int m_intAltoVentana;
+    private Boolean m_bJuegoIniciado;
     ControlJugador  m_ctrlJugador;
     private Thread m_threadAnimator;
+    private final SaltarEh m_Ventana;
+    private MenuPrincipal m_menuPrincipal;
     
-    public Mundo(int anchoVentana, int altoVentana){
+    public Mundo(int anchoVentana, int altoVentana, SaltarEh ventana){
         m_intAnchoVentana = anchoVentana;
         m_intAltoVentana = altoVentana;
+        m_bJuegoIniciado = false;
+        m_Ventana = ventana;
         IniciarMundo();
     }
     
     private void IniciarMundo(){
+        
+        m_menuPrincipal = new MenuPrincipal(m_intAnchoVentana, m_intAltoVentana);
         setPreferredSize(new Dimension(m_intAnchoVentana, m_intAltoVentana));
         setBackground(new Color(255,255,200));
-        m_ctrlJugador = new ControlJugador(m_intAnchoVentana, m_intAltoVentana);
         ConfigurarControles();
         
-        
+        addMouseListener(mousel);
+        this.addMouseMotionListener(mouseMotionl);
     }
     
-    private void ConfigurarControles(){
+    public void ConfigurarControles(){
+        m_ctrlJugador = new ControlJugador(m_intAnchoVentana, m_intAltoVentana);
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "MoverIzq");
         getActionMap().put("MoverIzq", m_ctrlJugador.moverIzq); 
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "MoverDer");
@@ -70,6 +85,10 @@ public class Mundo extends JPanel implements Runnable {
     private void drawImage(Graphics g){
         if(m_ctrlJugador.m_elementoMarioneta != null){      
             m_ctrlJugador.m_elementoMarioneta.Dibujar(g);
+        }
+        if(!m_bJuegoIniciado){
+            m_menuPrincipal.getOpcionSalir().Dibujar(g);
+            m_menuPrincipal.getOpcionJugar().Dibujar(g);
         }
         Toolkit.getDefaultToolkit().sync();
     }
@@ -109,6 +128,54 @@ public class Mundo extends JPanel implements Runnable {
             }
             beforeTime = System.currentTimeMillis();
         }
+    }
+    
+    MouseListener mousel = new MouseAdapter(){
+        @Override 
+        public void mousePressed(MouseEvent e) {
+            Elemento colisionador = buscarElementoColision(e.getX(), e.getY());
+            if(colisionador != null){
+                if(colisionador == m_menuPrincipal.getOpcionSalir()){
+                    System.exit(0);
+                }
+                if(colisionador == m_menuPrincipal.getOpcionJugar()){
+                    m_bJuegoIniciado = true;
+                    m_ctrlJugador.m_elementoMarioneta.setCy(
+                            m_intAltoVentana+m_ctrlJugador.m_elementoMarioneta.getSprite().getHeight(null)
+                    );
+                    m_Ventana.Jugar();
+                }
+            }
+        }
+        
+    };
+    
+    MouseMotionListener mouseMotionl = new MouseAdapter(){
+        @Override
+        public void mouseMoved(MouseEvent e){
+            Elemento colisionador = buscarElementoColision(e.getX(), e.getY());
+            if(colisionador != null){
+                if(colisionador == m_menuPrincipal.getOpcionSalir()){
+                    m_menuPrincipal.MouseEnOpcionSalir();
+                }
+                else if(colisionador == m_menuPrincipal.getOpcionJugar()){
+                    m_menuPrincipal.MouseEnOpcionJugar();
+                }
+            }
+            else{
+               // m_menuPrincipal.resetIcons();
+            }
+        }
+    };
+    
+    private Elemento buscarElementoColision(int cX, int cY){
+        if(m_menuPrincipal.getOpcionSalir().getLimites().intersects(new Rectangle(cX, cY, 1, 1))){
+            return m_menuPrincipal.getOpcionSalir();
+        }
+        else if(m_menuPrincipal.getOpcionJugar().getLimites().intersects(new Rectangle(cX, cY, 1, 1))){
+            return m_menuPrincipal.getOpcionJugar();
+        }
+        return null;
     }
     
    

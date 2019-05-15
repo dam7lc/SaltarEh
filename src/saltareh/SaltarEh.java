@@ -17,8 +17,10 @@ import ui.MenuPrincipal;
  */
 public class SaltarEh extends JFrame{
 
-    private Boolean m_bJuegoIniciado = false;
-    
+    private MenuPrincipal m_menuPrincipal;
+    private Mundo m_mundo;
+    private int m_intAnchoVentana;
+    private int m_intAltoVentana;
     public SaltarEh(){
         IniciarUI();
     }
@@ -28,10 +30,9 @@ public class SaltarEh extends JFrame{
         double ancho = screenSize.getWidth();
         double alto = screenSize.getHeight();
         double ratio = ancho/alto;
-        System.out.println(ratio);
-        setPreferredSize(new Dimension((int)ancho, (int)alto));
-        add(new MenuPrincipal((int)ancho, (int)alto));
-        //add(new Mundo(width, height));
+        m_intAnchoVentana = (int)ancho;
+        m_intAltoVentana = (int)alto;
+        setPreferredSize(new Dimension(m_intAnchoVentana, m_intAltoVentana));
         setResizable(false);
         setExtendedState(JFrame.MAXIMIZED_BOTH); 
         setUndecorated(true);
@@ -39,6 +40,14 @@ public class SaltarEh extends JFrame{
         setTitle("Saltar Eh!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        m_mundo = new Mundo(m_intAnchoVentana, m_intAltoVentana, this);
+        add(m_mundo);
+        m_mundo.setFocusable(false);
+    }
+    
+    public void Jugar(){
+        m_mundo.setFocusable(true);
+        m_mundo.requestFocus();
     }
     
     public static void main(String[] args) {
@@ -47,5 +56,7 @@ public class SaltarEh extends JFrame{
             Juego.setVisible(true);
         });
     }
+    
+    
     
 }
