@@ -17,41 +17,41 @@ import javax.swing.Action;
 public class ControlJugador extends Controlador{
     
     
-    public ControlJugador(int x, int y, int anchoVentana, int alturaVentana){
-        this.Jugador = new Player(x, y, anchoVentana, alturaVentana);
-        iAnchoVentana = anchoVentana;
-        iAltoVentana = alturaVentana;
+    
+    public ControlJugador(int anchoVentana, int alturaVentana){
+        m_elementoMarioneta = new Player(anchoVentana/2, alturaVentana, anchoVentana, alturaVentana);
+        m_intAnchoVentana = anchoVentana;
+        m_intAltoVentana = alturaVentana;
     }
     
     @Override
     public void Mover(){
         MovimientoDeSalto();
         if(m_bSeMueveDerecha){
-            Jugador.addCx(15);
+            m_elementoMarioneta.addCx(15);
         }
         if(m_bSeMueveIzquierda){
-            Jugador.addCx(-15);
+            m_elementoMarioneta.addCx(-15);
         }
-        if(Jugador.getCx() > iAnchoVentana){
-            Jugador.setCx(0);
+        if(m_elementoMarioneta.getCx() > m_intAnchoVentana){
+            m_elementoMarioneta.setCx(0);
         }
-        if(Jugador.getCx() < 0){
-            Jugador.setCx(iAnchoVentana);
+        if(m_elementoMarioneta.getCx() < 0){
+            m_elementoMarioneta.setCx(m_intAnchoVentana);
         }
     }
     
     public void MovimientoDeSalto(){
-        if(bEstaCayendo)  {
-            Jugador.addCy(7);
-            System.out.println(Jugador.getCx());
+        if(m_bEstaCayendo)  {
+            m_elementoMarioneta.addCy(7);
         }  
         else{
-            Jugador.addCy(-7);
+            m_elementoMarioneta.addCy(-7);
         }
-        if(Jugador.getCy()< (iAltoVentana/3)){
-            bEstaCayendo = true;
-        } else if(Jugador.getCy() > iAltoVentana-95){
-            bEstaCayendo = false;
+        if(m_elementoMarioneta.getCy() < ((m_intAltoVentana/3)-45)){
+            m_bEstaCayendo = true;
+        } else if(m_elementoMarioneta.getCy() > m_intAltoVentana-95){
+            m_bEstaCayendo = false;
         }
     }
     

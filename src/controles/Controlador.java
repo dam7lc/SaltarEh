@@ -6,20 +6,16 @@
 package controles;
 
 import elementos.Elemento;
-import java.awt.Graphics;
 
 /**
  *
  * @author dam7l
  */
 public abstract class Controlador {
-    public int iAnchoVentana, iAltoVentana;
-    public Boolean bEstaCayendo = false;
+    public int m_intAnchoVentana, m_intAltoVentana;
     public Boolean m_bSeMueveDerecha = false;
     public Boolean m_bSeMueveIzquierda = false;
-    public Elemento Jugador;
+    public Boolean m_bEstaCayendo = false;
+    public Elemento m_elementoMarioneta;
     public abstract void Mover();
-    public void Dibujar(Graphics g){
-        Jugador.Dibujar(g);
-    }
 }

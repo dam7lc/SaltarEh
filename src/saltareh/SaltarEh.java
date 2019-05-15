@@ -5,8 +5,11 @@
  */
 package saltareh;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 import javax.swing.JFrame;
+import ui.MenuPrincipal;
 
 /**
  *
@@ -14,18 +17,25 @@ import javax.swing.JFrame;
  */
 public class SaltarEh extends JFrame{
 
+    private Boolean m_bJuegoIniciado = false;
     
     public SaltarEh(){
         IniciarUI();
     }
     
     private void IniciarUI(){
-        add(new Mundo());
-        setResizable(true);
-        /*setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double ancho = screenSize.getWidth();
+        double alto = screenSize.getHeight();
+        double ratio = ancho/alto;
+        System.out.println(ratio);
+        setPreferredSize(new Dimension((int)ancho, (int)alto));
+        add(new MenuPrincipal((int)ancho, (int)alto));
+        //add(new Mundo(width, height));
+        setResizable(false);
+        setExtendedState(JFrame.MAXIMIZED_BOTH); 
         setUndecorated(true);
-        setVisible(true);*/
-        pack();
+        setVisible(true);
         setTitle("Saltar Eh!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

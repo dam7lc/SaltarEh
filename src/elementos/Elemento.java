@@ -14,58 +14,60 @@ import javax.swing.ImageIcon;
  * @author dam7l
  */
 public class Elemento {
-    protected Image m_iSprite;
-    protected int m_iCx;
-    protected int m_iCy;
-    protected int m_iAltura;
-    protected int m_iAncho;
+    protected Image m_imgSprite;
+    protected int m_intCx;
+    protected int m_intCy;
+    protected int m_intAlto;
+    protected int m_intAncho;
     
     Elemento(int x, int y, int ancho, int altura, String imgSource){
-        m_iCx = x;
-        m_iCy = y;
-        m_iAncho = ancho;
-        m_iAltura = altura;
+        m_intCx = x;
+        m_intCy = y;
+        m_intAlto = ancho;
+        m_intAncho = altura;
         ImageIcon ii = new ImageIcon(imgSource);
-        m_iSprite = ii.getImage();
+        m_imgSprite = ii.getImage();
     }
     
     public void Dibujar(Graphics g){
-        g.drawImage(m_iSprite, m_iCx, m_iCy, null);
+        g.drawImage(m_imgSprite, m_intCx, m_intCy, null);
     }
+    
+   
 
     public Image getSprite() {
-        return m_iSprite;
+        return m_imgSprite;
     }
 
     public void setSprite(Image sprite) {
-        this.m_iSprite = sprite;
+        this.m_imgSprite = sprite;
     }
 
     public int getCx() {
-        return m_iCx;
+        return m_intCx;
     }
 
     public void setCx(int cx) {
-        this.m_iCx = cx;
+        this.m_intCx = cx;
     }
 
     public int getCy() {
-        return m_iCy;
+        return m_intCy;
     }
 
     public void setCy(int cy) {
-        this.m_iCy = cy;
+        this.m_intCy = cy;
     }
     
     public void addCx(int cx) {
-        this.m_iCx += cx;
+        this.m_intCx += cx;
     }
     
     public void addCy(int cy) {
-        this.m_iCy += cy;
+        this.m_intCy += cy;
     }
     
     public int getAncho(){
-        return m_iAncho;
+        return m_intAncho;
     }
 }

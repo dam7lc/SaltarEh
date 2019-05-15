@@ -12,65 +12,54 @@ import javax.swing.KeyStroke;
 
 
 public class Mundo extends JPanel implements Runnable {
+    private final int m_intDelay = 25;
+    private final int m_intAnchoVentana;
+    private final int m_intAltoVentana;
+    ControlJugador  m_ctrlJugador;
+    private Thread m_threadAnimator;
     
-    private final int B_WIDTH = 1280;
-    private final int B_HEIGHT = 720;
-    private final int INITIAL_X = 1280/2;
-    private final int INITIAL_Y = 720;
-    private final int DELAY = 25;
-    ControlJugador  ctrlJugador;
-   
-    private Thread animator;
-    
-    public Mundo(){
+    public Mundo(int anchoVentana, int altoVentana){
+        m_intAnchoVentana = anchoVentana;
+        m_intAltoVentana = altoVentana;
         IniciarMundo();
     }
     
     private void IniciarMundo(){
-        setBackground(Color.WHITE);
-        setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
-        ctrlJugador = new ControlJugador(INITIAL_X, INITIAL_Y, B_WIDTH, B_HEIGHT);
-        loadImage();
+        setPreferredSize(new Dimension(m_intAnchoVentana, m_intAltoVentana));
+        setBackground(new Color(255,255,200));
+        m_ctrlJugador = new ControlJugador(m_intAnchoVentana, m_intAltoVentana);
         ConfigurarControles();
-        
-        //int w = jugadorImg.getWidth(this);
-        //int h = jugadorImg.getHeight(this);
-        //setPreferredSize(new Dimension(h,w));
-  
-        //this.get
         
         
     }
     
     private void ConfigurarControles(){
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "MoverIzq");
-        getActionMap().put("MoverIzq", ctrlJugador.moverIzq); 
+        getActionMap().put("MoverIzq", m_ctrlJugador.moverIzq); 
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "MoverDer");
-        getActionMap().put("MoverDer", ctrlJugador.moverDer); 
+        getActionMap().put("MoverDer", m_ctrlJugador.moverDer); 
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0), "MoverIzq");
-        getActionMap().put("MoverIzq", ctrlJugador.moverIzq); 
+        getActionMap().put("MoverIzq", m_ctrlJugador.moverIzq); 
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0), "MoverDer");
-        getActionMap().put("MoverDer", ctrlJugador.moverDer); 
+        getActionMap().put("MoverDer", m_ctrlJugador.moverDer); 
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), "MoverIzqSoltado");
-        getActionMap().put("MoverIzqSoltado", ctrlJugador.moverIzqSoltado); 
+        getActionMap().put("MoverIzqSoltado", m_ctrlJugador.moverIzqSoltado); 
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "MoverDerSoltado");
-        getActionMap().put("MoverDerSoltado", ctrlJugador.moverDerSoltado); 
+        getActionMap().put("MoverDerSoltado", m_ctrlJugador.moverDerSoltado); 
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), "MoverIzqSoltado");
-        getActionMap().put("MoverIzqSoltado", ctrlJugador.moverIzqSoltado); 
+        getActionMap().put("MoverIzqSoltado", m_ctrlJugador.moverIzqSoltado); 
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), "MoverDerSoltado");
-        getActionMap().put("MoverDerSoltado", ctrlJugador.moverDerSoltado); 
+        getActionMap().put("MoverDerSoltado", m_ctrlJugador.moverDerSoltado); 
     }
     
     @Override
     public void addNotify(){
         super.addNotify();
-        animator = new Thread(this);
-        animator.start();
+        m_threadAnimator = new Thread(this);
+        m_threadAnimator.start();
     }
    
     
-    private void loadImage(){
-    }
     
     @Override
     public void paintComponent(Graphics g){
@@ -79,14 +68,16 @@ public class Mundo extends JPanel implements Runnable {
     }
     
     private void drawImage(Graphics g){
-        ctrlJugador.Dibujar(g);
+        if(m_ctrlJugador.m_elementoMarioneta != null){      
+            m_ctrlJugador.m_elementoMarioneta.Dibujar(g);
+        }
         Toolkit.getDefaultToolkit().sync();
     }
     
     
     
     private void cycle(){
-        ctrlJugador.Mover();
+        m_ctrlJugador.Mover();
     }
     
     @Override
@@ -99,7 +90,7 @@ public class Mundo extends JPanel implements Runnable {
             repaint();
             
             timeDiff = System.currentTimeMillis() - beforeTime;
-            sleep = DELAY - timeDiff;
+            sleep = m_intDelay - timeDiff;
             
             if(sleep < 0){
                 sleep = 2;

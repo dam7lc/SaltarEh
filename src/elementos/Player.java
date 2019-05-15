@@ -10,8 +10,11 @@ package elementos;
  * @author dam7lc
  */
 public class Player extends Elemento {
+    
 
     public Player(int x, int y, int ancho, int altura) {
-        super(x, y, ancho, altura, "src/resources/Doodle.jpg");
+        super(x, y, ancho, altura, "src/resources/Doodle.png");
     }
+    
+    
 }
