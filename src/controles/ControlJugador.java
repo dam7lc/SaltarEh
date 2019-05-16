@@ -8,6 +8,7 @@ package controles;
 import elementos.Elemento;
 import elementos.Player;
 import java.awt.event.ActionEvent;
+import java.util.Random;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -36,8 +37,18 @@ public class ControlJugador extends Controlador{
         m_intAltoVentana = alturaVentana;
     }
     
-    public Elemento probarColision(){
-        return m_elementoMarioneta.probarColision();
+    public Elemento probarColision(Elemento[] plataformasEstaticas){
+        Elemento e = m_elementoMarioneta.probarColision(plataformasEstaticas);
+        if(e!=null && m_elementoMarioneta.getbHayColision()){
+            Random generadorRandom = new Random();
+            e.setCx(generadorRandom.nextInt(m_intAnchoVentana));
+            e.setCy(m_intAltoVentana/3+(generadorRandom.nextInt((m_intAltoVentana/2))));
+            e.calcularLimites();
+            if(m_bEstaCayendo){
+                m_bEstaCayendo=false;
+            }
+        }
+        return e;
     }
     
     @Override
@@ -55,6 +66,7 @@ public class ControlJugador extends Controlador{
         if(m_elementoMarioneta.getCx() < 0){
             m_elementoMarioneta.setCx(m_intAnchoVentana);
         }
+        m_elementoMarioneta.calcularLimites();
     }
     
     public void MovimientoDeSalto(){

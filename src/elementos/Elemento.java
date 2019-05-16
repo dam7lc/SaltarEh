@@ -28,7 +28,7 @@ public class Elemento {
     protected int m_intAlto;
     protected Rectangle m_rectLimites;
     protected boolean m_bMouseSobre;
-    protected boolean m_bEsSpriteAjustada = false;
+    protected boolean m_bHayColision;protected boolean m_bEsSpriteAjustada = false;
     protected boolean m_bEsClickeable = false;
     
     public Elemento(String nombre, int x, int y, String imgSrc, String imgHoverSrc, int ancho, int alto){
@@ -138,7 +138,7 @@ public class Elemento {
         
     }
     
-    private void calcularLimites(){
+    public void calcularLimites(){
         m_rectLimites = new Rectangle( 
                 getCx(),
                 getCy(),
@@ -174,7 +174,20 @@ public class Elemento {
         calcularLimites();
     }
     
-    public Elemento probarColision(){
+    public Elemento probarColision(Elemento[] plataformasEstaticas){
+        for(Elemento e : plataformasEstaticas){
+            if(e!=null){
+                if(!getbHayColision() && getLimites().intersects(e.getLimites()) ){
+                    setbHayColision(true);
+                    if(e.getCy() < getCy()){
+                        return e;
+                    }
+                    return null;
+                }
+            }
+        }
+        
+        setbHayColision(false);
         return null;
     }
 
@@ -205,4 +218,15 @@ public class Elemento {
     public String getName(){
         return m_stringNombre;
     }
+    
+    
+
+    public boolean getbHayColision() {
+        return m_bHayColision;
+    }
+
+    public void setbHayColision(boolean m_bHayColision) {
+        this.m_bHayColision = m_bHayColision;
+    }
+    
 }

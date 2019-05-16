@@ -87,9 +87,6 @@ public class Mundo extends JPanel implements Runnable {
             );
             m_elementosPlataformasEstaticas[i].pintar(Color.blue);
         }
-//        for(Elemento e : m_elementosPlataformasEstaticas){
-//            e = 
-//        }
     }
     
     public void ConfigurarControles(){
@@ -150,7 +147,10 @@ public class Mundo extends JPanel implements Runnable {
     private void cycle(){
         if(!m_bJuegoPausado){
             m_ctrlJugador.Mover();
-            m_ctrlJugador.probarColision();
+            if(m_bJuegoIniciado){
+                m_ctrlJugador.probarColision(m_elementosPlataformasEstaticas);
+            }
+            
         }
     }
     
