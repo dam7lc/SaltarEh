@@ -34,8 +34,8 @@ public class SaltarEh extends JFrame{
         m_intAltoVentana = (int)alto;
         setPreferredSize(new Dimension(m_intAnchoVentana, m_intAltoVentana));
         setResizable(false);
-        setExtendedState(JFrame.MAXIMIZED_BOTH); 
-        setUndecorated(true);
+//        setExtendedState(JFrame.MAXIMIZED_BOTH); 
+//        setUndecorated(true);
         setVisible(true);
         setTitle("Saltar Eh!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

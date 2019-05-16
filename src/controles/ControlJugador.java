@@ -40,6 +40,7 @@ public class ControlJugador extends Controlador{
     public Elemento probarColision(Elemento[] plataformasEstaticas){
         Elemento e = m_elementoMarioneta.probarColision(plataformasEstaticas);
         if(e!=null && m_elementoMarioneta.getbHayColision()){
+            System.out.println(e.getCy() + " " + m_elementoMarioneta.getCy());
             Random generadorRandom = new Random();
             e.setCx(generadorRandom.nextInt(m_intAnchoVentana));
             e.setCy(m_intAltoVentana/3+(generadorRandom.nextInt((m_intAltoVentana/2))));
@@ -71,6 +72,7 @@ public class ControlJugador extends Controlador{
     
     public void MovimientoDeSalto(){
         m_intVelocidadCaida = m_elementoMarioneta.getCy()/32;
+        m_intVelocidadCaida = 1;
         if(m_bEstaCayendo)  {
             m_elementoMarioneta.addCy(m_intVelocidadCaida);
         }  

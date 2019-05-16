@@ -3,14 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Projects/SaltarEh/src/elementos/Player.java</file>
-            <file>file:/D:/Projects/SaltarEh/src/ui/MenuPausa.java</file>
-            <file>file:/D:/Projects/SaltarEh/src/elementos/Elemento.java</file>
-            <file>file:/D:/Projects/SaltarEh/src/ui/MenuPrincipal.java</file>
-            <file>file:/D:/Projects/SaltarEh/src/controles/ControlJugador.java</file>
-            <file>file:/D:/Projects/SaltarEh/src/saltareh/SaltarEh.java</file>
-            <file>file:/D:/Projects/SaltarEh/src/ui/Menu.java</file>
-            <file>file:/D:/Projects/SaltarEh/src/saltareh/Mundo.java</file>
+            <file>file:/C:/Users/dam7l/Documents/Projects/NetBeans/SaltarEh/src/controles/Controlador.java</file>
+            <file>file:/C:/Users/dam7l/Documents/Projects/NetBeans/SaltarEh/src/controles/ControlJugador.java</file>
+            <file>file:/C:/Users/dam7l/Documents/Projects/NetBeans/SaltarEh/src/saltareh/SaltarEh.java</file>
+            <file>file:/C:/Users/dam7l/Documents/Projects/NetBeans/SaltarEh/src/saltareh/Mundo.java</file>
+            <file>file:/C:/Users/dam7l/Documents/Projects/NetBeans/SaltarEh/src/ui/MenuPrincipal.java</file>
+            <file>file:/C:/Users/dam7l/Documents/Projects/NetBeans/SaltarEh/src/elementos/Player.java</file>
+            <file>file:/C:/Users/dam7l/Documents/Projects/NetBeans/SaltarEh/src/elementos/Elemento.java</file>
         </group>
     </open-files>
 </project-private>

@@ -178,16 +178,20 @@ public class Elemento {
         for(Elemento e : plataformasEstaticas){
             if(e!=null){
                 if(!getbHayColision() && getLimites().intersects(e.getLimites()) ){
+                    
                     setbHayColision(true);
-                    if(e.getCy() < getCy()){
+                    if(e.getCy() > getCy()){
                         return e;
+                        
                     }
                     return null;
+                } else if(getLimites().intersects(e.getLimites())){
+                    setbHayColision(false);
                 }
+                
             }
         }
         
-        setbHayColision(false);
         return null;
     }
 

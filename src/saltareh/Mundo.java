@@ -47,7 +47,7 @@ public class Mundo extends JPanel implements Runnable {
         m_bJuegoPausado = false;
         m_Ventana = ventana;
         m_intNumeroEnemigos = 1 ;
-        m_intNumeroPlataformasEstaticas = 2;
+        m_intNumeroPlataformasEstaticas = 1;
         m_intNumeroPlataformasDinamicas = 1;
         m_intNumeroPlataformasFragiles = 2;
         IniciarMundo();
@@ -78,7 +78,8 @@ public class Mundo extends JPanel implements Runnable {
         for(int i = 0; i < m_intNumeroPlataformasEstaticas; i++){
             m_elementosPlataformasEstaticas[i] = new Elemento(
             "Plataforma estatica",
-            generadorRandom.nextInt(m_intAnchoVentana),
+            m_intAnchoVentana/2,
+            //generadorRandom.nextInt(m_intAnchoVentana),
             m_intAltoVentana/3+(generadorRandom.nextInt((m_intAltoVentana/2))),
             "src/resources/plataforma.png",
             null,
