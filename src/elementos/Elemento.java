@@ -19,57 +19,76 @@ import javax.swing.ImageIcon;
  * @author dam7l
  */
 public class Elemento {
+    protected String m_stringNombre;
     protected Image m_imgSprite;
+    protected Image m_imgSpriteSobre;
     protected int m_intCx;
     protected int m_intCy;
     protected int m_intAncho;
     protected int m_intAlto;
     protected Rectangle m_rectLimites;
+    protected boolean m_bMouseSobre;
+    protected boolean m_bEsSpriteAjustada = false;
+    protected boolean m_bEsClickeable = false;
     
-    public Elemento(int x, int y, String imgSrc, int ancho, int alto){
-        Iniciar(x, y, imgSrc, ancho, alto);
-        
+    public Elemento(String nombre, int x, int y, String imgSrc, String imgHoverSrc, int ancho, int alto){
+        Iniciar(nombre, x, y, imgSrc, imgHoverSrc, ancho, alto);
+        m_bMouseSobre = false;
     }
     
-    private void Iniciar(int x, int y, String imgSrc, int ancho, int alto){
+    private void Iniciar(String nombre, int x, int y, String imgSrc, String imgHoverSrc, int ancho, int alto){
+        m_stringNombre = nombre;
         setCx(x);
         setCy(y);
         setAncho(ancho);
         setAlto(alto);
         ImageIcon icon = new ImageIcon(imgSrc);
-        setSprite(icon.getImage());
-        Dimensionar(ancho, alto);
-    }
-    
-    public void Dimensionar(int ancho, int alto){
-        ImageIcon imgicon = new ImageIcon(getSprite());
-        imgicon = new ImageIcon(
-                imgicon.getImage().getScaledInstance(
-                        ancho, alto,  java.awt.Image.SCALE_SMOOTH
-                )
-        );
-       
-        setAncho(imgicon.getIconWidth());
-        setAlto(imgicon.getIconHeight());
-        addCx(-(getAncho()/2));
-        addCy(-(getAlto()/2));
-        setSprite(imgicon.getImage());
+        setSprite(Dimensionar(icon, ancho, alto));
+        addCx(-((getAncho())/2));
+        addCy(-((getAlto())/2));
+        ImageIcon iconHover = new ImageIcon(imgHoverSrc);
+        if(imgHoverSrc == null){
+            setSpriteSobre(Dimensionar(icon, (int)(getAncho()*.9f), (int)(getAlto()*.9f)));
+            m_bEsSpriteAjustada = true;
+        }
+        else {
+            setSpriteSobre(Dimensionar(iconHover, (int)(getAncho()), (int)(getAlto())));
+        }
         
     }
     
-    public void Redimensionar(int ancho, int alto){
-        ImageIcon imgicon = new ImageIcon(getSprite());
-        imgicon = new ImageIcon(
-                imgicon.getImage().getScaledInstance(
+    public Image Dimensionar(ImageIcon imageIcon, int ancho, int alto){
+        imageIcon = new ImageIcon(
+                imageIcon.getImage().getScaledInstance(
                         ancho, alto,  java.awt.Image.SCALE_SMOOTH
                 )
         );
-        setSprite(imgicon.getImage());
+        return imageIcon.getImage();
         
+    }
+    
+    
+    public void enMouseSobre(){
+        m_bMouseSobre = true;
+    }
+    
+    public void enMouseFuera(){
+        m_bMouseSobre = false;
     }
     
     public void Dibujar(Graphics g){
-        g.drawImage(m_imgSprite, m_intCx, m_intCy, null);
+        
+        if(m_bMouseSobre && m_imgSpriteSobre != null){
+            if(m_bEsSpriteAjustada){
+                g.drawImage(m_imgSpriteSobre, m_intCx+((int)(getAncho()*.1f)/2), m_intCy+((int)(getAlto()*.1f)/2), null);
+            }
+            else {
+                g.drawImage(m_imgSpriteSobre, m_intCx, m_intCy, null);
+            }
+        }
+        else{
+            g.drawImage(m_imgSprite, m_intCx, m_intCy, null);
+        }
     }
     
     public Rectangle getLimites(){
@@ -82,6 +101,14 @@ public class Elemento {
     
     public void setAncho(int ancho){
         m_intAncho = ancho;
+    }
+    
+    public void setbEsClickeable(boolean b){
+        m_bEsClickeable = b;
+    }
+    
+    public boolean getbEsClickeable(){
+        return m_bEsClickeable;
     }
     
     public int getAncho(){
@@ -103,6 +130,14 @@ public class Elemento {
         calcularLimites();
     }
     
+    public void setSpriteSobre(Image image) {
+        this.m_imgSpriteSobre = image;
+        setAncho(image.getWidth(null));
+        setAlto(image.getHeight(null));
+        calcularLimites();
+        
+    }
+    
     private void calcularLimites(){
         m_rectLimites = new Rectangle( 
                 getCx(),
@@ -119,12 +154,28 @@ public class Elemento {
         Graphics2D g = iconoAPintar.createGraphics();
         g.drawImage(getSprite(), 0,0, null);
         g.setComposite(AlphaComposite.SrcAtop);
-        g.setColor(Color.black);
+        g.setColor(c);
         g.fillRect(0,0,w,h);
         g.dispose();
+        
+        BufferedImage iconoAPintar2 = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = iconoAPintar2.createGraphics();
+        g2.drawImage(m_imgSpriteSobre, 0,0, null);
+        g2.setComposite(AlphaComposite.SrcAtop);
+        g2.setColor(c);
+        g2.fillRect(0,0,w,h);
+        g2.dispose();
+        
         ImageIcon imgicon = new ImageIcon(iconoAPintar);
         this.m_imgSprite = imgicon.getImage();
+        
+        ImageIcon imgicon2 = new ImageIcon(iconoAPintar2);
+        this.m_imgSpriteSobre = imgicon2.getImage();
         calcularLimites();
+    }
+    
+    public Elemento probarColision(){
+        return null;
     }
 
     public int getCx() {
@@ -151,4 +202,7 @@ public class Elemento {
         this.m_intCy += cy;
     }
     
+    public String getName(){
+        return m_stringNombre;
+    }
 }

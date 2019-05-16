@@ -1,11 +1,12 @@
 package saltareh;
 
 import controles.ControlJugador;
+import controles.ControladorEnemigo;
+import controles.ControladorPlataforma;
 import elementos.Elemento;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -15,6 +16,8 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import java.util.Random;
+import ui.MenuPausa;
 import ui.MenuPrincipal;
 
 
@@ -22,29 +25,71 @@ public class Mundo extends JPanel implements Runnable {
     private final int m_intDelay = 25;
     private final int m_intAnchoVentana;
     private final int m_intAltoVentana;
-    private Boolean m_bJuegoIniciado;
-    ControlJugador  m_ctrlJugador;
+    private final int m_intNumeroEnemigos;
+    private final int m_intNumeroPlataformasEstaticas;
+    private final int m_intNumeroPlataformasDinamicas;
+    private final int m_intNumeroPlataformasFragiles;
+    private boolean m_bJuegoIniciado;
+    private ControlJugador  m_ctrlJugador;
+    private ControladorEnemigo[] m_ctrlEnemigos;
+    private ControladorPlataforma[] m_ctrlPlataformas;
+    private Elemento[] m_elementosPlataformasEstaticas;
     private Thread m_threadAnimator;
     private final SaltarEh m_Ventana;
     private MenuPrincipal m_menuPrincipal;
+    private MenuPausa m_menuPausa;
+    private boolean m_bJuegoPausado;
     
     public Mundo(int anchoVentana, int altoVentana, SaltarEh ventana){
         m_intAnchoVentana = anchoVentana;
         m_intAltoVentana = altoVentana;
         m_bJuegoIniciado = false;
+        m_bJuegoPausado = false;
         m_Ventana = ventana;
+        m_intNumeroEnemigos = 1 ;
+        m_intNumeroPlataformasEstaticas = 2;
+        m_intNumeroPlataformasDinamicas = 1;
+        m_intNumeroPlataformasFragiles = 2;
         IniciarMundo();
     }
     
     private void IniciarMundo(){
         
-        m_menuPrincipal = new MenuPrincipal(m_intAnchoVentana, m_intAltoVentana);
+        m_menuPrincipal = new MenuPrincipal(m_intAnchoVentana, m_intAltoVentana, true);
+        m_menuPausa = new MenuPausa(m_intAnchoVentana, m_intAltoVentana, false);
         setPreferredSize(new Dimension(m_intAnchoVentana, m_intAltoVentana));
         setBackground(new Color(255,255,200));
         ConfigurarControles();
         
         addMouseListener(mousel);
         this.addMouseMotionListener(mouseMotionl);
+    }
+    
+    public void IniciarPartida(){
+        Random generadorRandom = new Random();
+        m_bJuegoIniciado = true;
+        m_menuPrincipal.setbEstaActivo(false);
+        m_menuPausa.setbEstaActivo(true);
+        m_ctrlJugador.m_elementoMarioneta.setCy(
+                m_intAltoVentana+m_ctrlJugador.m_elementoMarioneta.getSprite().getHeight(null)
+        );
+        m_Ventana.Jugar();
+        m_elementosPlataformasEstaticas = new Elemento[m_intNumeroPlataformasEstaticas]; 
+        for(int i = 0; i < m_intNumeroPlataformasEstaticas; i++){
+            m_elementosPlataformasEstaticas[i] = new Elemento(
+            "Plataforma estatica",
+            generadorRandom.nextInt(m_intAnchoVentana),
+            m_intAltoVentana/3+(generadorRandom.nextInt((m_intAltoVentana/2))),
+            "src/resources/plataforma.png",
+            null,
+            m_intAnchoVentana/8,
+            m_intAnchoVentana/40
+            );
+            m_elementosPlataformasEstaticas[i].pintar(Color.blue);
+        }
+//        for(Elemento e : m_elementosPlataformasEstaticas){
+//            e = 
+//        }
     }
     
     public void ConfigurarControles(){
@@ -87,8 +132,15 @@ public class Mundo extends JPanel implements Runnable {
             m_ctrlJugador.m_elementoMarioneta.Dibujar(g);
         }
         if(!m_bJuegoIniciado){
-            m_menuPrincipal.getOpcionSalir().Dibujar(g);
-            m_menuPrincipal.getOpcionJugar().Dibujar(g);
+            m_menuPrincipal.Dibujar(g);
+        }
+        else{
+            m_menuPausa.Dibujar(g);
+            for(Elemento e : m_elementosPlataformasEstaticas){
+                if(e != null){
+                    e.Dibujar(g);
+                }
+            }
         }
         Toolkit.getDefaultToolkit().sync();
     }
@@ -96,7 +148,10 @@ public class Mundo extends JPanel implements Runnable {
     
     
     private void cycle(){
-        m_ctrlJugador.Mover();
+        if(!m_bJuegoPausado){
+            m_ctrlJugador.Mover();
+            m_ctrlJugador.probarColision();
+        }
     }
     
     @Override
@@ -135,15 +190,24 @@ public class Mundo extends JPanel implements Runnable {
         public void mousePressed(MouseEvent e) {
             Elemento colisionador = buscarElementoColision(e.getX(), e.getY());
             if(colisionador != null){
-                if(colisionador == m_menuPrincipal.getOpcionSalir()){
-                    System.exit(0);
+                if(m_menuPrincipal.getbEstaActivo()){
+                    if(colisionador == m_menuPrincipal.getOpcionSalir()){
+                        System.exit(0);
+                    }
+                    else if(colisionador == m_menuPrincipal.getOpcionJugar()){
+                        IniciarPartida();
+                    }
                 }
-                if(colisionador == m_menuPrincipal.getOpcionJugar()){
-                    m_bJuegoIniciado = true;
-                    m_ctrlJugador.m_elementoMarioneta.setCy(
-                            m_intAltoVentana+m_ctrlJugador.m_elementoMarioneta.getSprite().getHeight(null)
-                    );
-                    m_Ventana.Jugar();
+                if(m_menuPausa.getbEstaActivo()){
+                    if(colisionador == m_menuPausa.getOpcionPausa()){
+                        m_bJuegoPausado = true;
+                        m_menuPausa.setbJuegoPausado(true);
+                    } else if( colisionador == m_menuPausa.getOpcionSalir()){
+                        System.exit(0);
+                    } else if( colisionador == m_menuPausa.getTextoPausa()){
+                        m_bJuegoPausado = false;
+                        m_menuPausa.setbJuegoPausado(false);
+                    }
                 }
             }
         }
@@ -154,26 +218,23 @@ public class Mundo extends JPanel implements Runnable {
         @Override
         public void mouseMoved(MouseEvent e){
             Elemento colisionador = buscarElementoColision(e.getX(), e.getY());
-            if(colisionador != null){
-                if(colisionador == m_menuPrincipal.getOpcionSalir()){
-                    m_menuPrincipal.MouseEnOpcionSalir();
+            if(colisionador == null){
+                if(m_menuPrincipal.getbEstaActivo()){
+                    m_menuPrincipal.resetIcons();
                 }
-                else if(colisionador == m_menuPrincipal.getOpcionJugar()){
-                    m_menuPrincipal.MouseEnOpcionJugar();
+                else if(m_menuPausa.getbEstaActivo()){
+                    m_menuPausa.resetIcons();
                 }
-            }
-            else{
-               // m_menuPrincipal.resetIcons();
             }
         }
     };
     
     private Elemento buscarElementoColision(int cX, int cY){
-        if(m_menuPrincipal.getOpcionSalir().getLimites().intersects(new Rectangle(cX, cY, 1, 1))){
-            return m_menuPrincipal.getOpcionSalir();
+        if(m_menuPrincipal.getbEstaActivo()){
+            return m_menuPrincipal.buscarElementoColision(cX, cY);
         }
-        else if(m_menuPrincipal.getOpcionJugar().getLimites().intersects(new Rectangle(cX, cY, 1, 1))){
-            return m_menuPrincipal.getOpcionJugar();
+        else if(m_menuPausa.getbEstaActivo()){
+            return m_menuPausa.buscarElementoColision(cX, cY);
         }
         return null;
     }

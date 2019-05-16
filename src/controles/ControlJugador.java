@@ -23,14 +23,21 @@ public class ControlJugador extends Controlador{
     
     public ControlJugador(int anchoVentana, int alturaVentana){
         
-        m_elementoMarioneta = new Elemento(anchoVentana/2, 
+        m_elementoMarioneta = new Elemento(
+                "Personaje ",
+                anchoVentana/2, 
                 alturaVentana, 
                 "src/resources/Doodle.png", 
+                null,
                 anchoVentana/20, 
                 anchoVentana/20
         );
         m_intAnchoVentana = anchoVentana;
         m_intAltoVentana = alturaVentana;
+    }
+    
+    public Elemento probarColision(){
+        return m_elementoMarioneta.probarColision();
     }
     
     @Override

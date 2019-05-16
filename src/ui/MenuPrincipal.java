@@ -15,35 +15,56 @@ import javax.swing.ImageIcon;
  *
  * @author dam7l
  */
-public class MenuPrincipal{
+public class MenuPrincipal extends Menu{
 
-    private final int m_intAnchoVentana;
-    private final int m_intAltoVentana;
+    
     private final Elemento m_elementoOpcionSalir;
     private final Elemento m_elementoOpcionJugar;
+    private final Elemento m_elementoOpcionAjustes;
+    
         
-    public MenuPrincipal(double anchoVentana, double altoVentana){
-        m_intAnchoVentana = (int)(anchoVentana);
-        m_intAltoVentana = (int)(altoVentana);
-        
+    public MenuPrincipal(double anchoVentana, double altoVentana, boolean activo){
+        super(anchoVentana, altoVentana, activo);
         
         m_elementoOpcionSalir = new Elemento(
-                m_intAnchoVentana-(m_intAnchoVentana/34), 
-                (m_intAnchoVentana/34), 
+                "Opcion Salir",
+                m_intAnchoVentana-(m_intAnchoVentana/35), 
+                (m_intAnchoVentana/35), 
                 "src/resources/btnSalir.png",
+                "src/resources/btnSalirHover.png",
                 m_intAnchoVentana/35,
                 m_intAnchoVentana/35
         );
-        
+        m_elementoOpcionSalir.setbEsClickeable(true);
         
         m_elementoOpcionJugar = new Elemento(
+                "OpcionJugar", 
                 (m_intAnchoVentana/2), 
                 (m_intAltoVentana/2)-(m_intAltoVentana/6), 
                 "src/resources/btnJugar.png",
+                null,
                 (m_intAnchoVentana/6),
                 m_intAnchoVentana/12
         );
+        m_elementoOpcionJugar.setbEsClickeable(true);
         m_elementoOpcionJugar.pintar(Color.black);
+        
+        m_elementoOpcionAjustes = new Elemento(
+                "Opcion Ajustes",
+                (m_intAnchoVentana/2), 
+                (m_intAltoVentana/2), 
+                "src/resources/textAjustes.png",
+                null,
+                (m_intAnchoVentana/6),
+                m_intAnchoVentana/18
+        );
+        m_elementoOpcionAjustes.setbEsClickeable(true);
+        m_elementoOpcionAjustes.pintar(Color.black);
+        
+        m_arrayElementos = new Elemento[3];
+        m_arrayElementos[0] = m_elementoOpcionSalir;
+        m_arrayElementos[1] = m_elementoOpcionJugar;
+        m_arrayElementos[2] = m_elementoOpcionAjustes;
     }
     
     public Elemento getOpcionSalir() {
@@ -53,28 +74,5 @@ public class MenuPrincipal{
     public Elemento getOpcionJugar() {
         return m_elementoOpcionJugar;
     }
-    
-    public void MouseEnOpcionSalir(){
-        ImageIcon imageicon = new ImageIcon("src/resources/btnSalirHover.png");
-        m_elementoOpcionSalir.setSprite(imageicon.getImage());
-        m_elementoOpcionSalir.Redimensionar(m_intAnchoVentana/35, m_intAnchoVentana/35);
-        
-       
-    }
-    
-    public void MouseEnOpcionJugar(){
-         m_elementoOpcionJugar.Redimensionar((m_intAnchoVentana/8), m_intAnchoVentana/16);
-    }
-    
-    public void resetIcons(){
-        
-        ImageIcon imageicon = new ImageIcon("src/resources/btnSalirHover.png");
-        m_elementoOpcionSalir.setSprite(imageicon.getImage());
-        m_elementoOpcionSalir.Redimensionar(m_intAnchoVentana/35, m_intAnchoVentana/35);
-        
-        m_elementoOpcionJugar.Redimensionar((m_intAnchoVentana/6), m_intAnchoVentana/12);
-        
-    }
-    
 }
 

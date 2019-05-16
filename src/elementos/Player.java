@@ -14,8 +14,8 @@ import java.awt.Image;
 public class Player extends Elemento {
     
 
-    public Player(int x, int y, String img, int ancho, int alto) {
-        super(x,y,img, ancho, alto);
+    public Player(String nombre, int x, int y, String img, String hoverimg, int ancho, int alto) {
+        super(nombre, x,y,img, hoverimg, ancho, alto);
     }
     
     
