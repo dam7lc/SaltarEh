@@ -18,4 +18,5 @@ public abstract class Controlador {
     public Boolean m_bEstaCayendo = false;
     public Elemento m_elementoMarioneta;
     public abstract void Mover();
+   
 }

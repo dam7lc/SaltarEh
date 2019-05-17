@@ -20,7 +20,8 @@ import javax.swing.ImageIcon;
 public class ControlJugador extends Controlador{
     
     private int m_intVelocidadCaida;
-    
+    private int m_intAlturaSalto;
+    private int m_intMaxAltura;
     
     public ControlJugador(int anchoVentana, int alturaVentana){
         
@@ -35,21 +36,26 @@ public class ControlJugador extends Controlador{
         );
         m_intAnchoVentana = anchoVentana;
         m_intAltoVentana = alturaVentana;
+        m_intAlturaSalto = m_elementoMarioneta.getCy()-((m_intAltoVentana/2)+m_elementoMarioneta.getAlto());
+        m_intMaxAltura = m_intAlturaSalto;
     }
     
-    public Elemento probarColision(Elemento[] plataformasEstaticas){
-        Elemento e = m_elementoMarioneta.probarColision(plataformasEstaticas);
-        if(e!=null && m_elementoMarioneta.getbHayColision()){
-            System.out.println(e.getCy() + " " + m_elementoMarioneta.getCy());
-            Random generadorRandom = new Random();
-            e.setCx(generadorRandom.nextInt(m_intAnchoVentana));
-            e.setCy(m_intAltoVentana/3+(generadorRandom.nextInt((m_intAltoVentana/2))));
-            e.calcularLimites();
-            if(m_bEstaCayendo){
-                m_bEstaCayendo=false;
+    public void probarColision(ControladorPlataforma[] ctrlPlataformasEstaticas){
+        if(ctrlPlataformasEstaticas != null){
+            ControladorPlataforma c = m_elementoMarioneta.probarColision(ctrlPlataformasEstaticas);
+            if(c!=null && m_elementoMarioneta.getbHayColision() && m_bEstaCayendo){
+                m_intMaxAltura = m_intAlturaSalto - (m_intAltoVentana - c.m_elementoMarioneta.getCy());
+                if(m_intMaxAltura < m_intAltoVentana/4-(m_elementoMarioneta.getAlto())){
+                    m_intMaxAltura = m_intAltoVentana/4 - m_elementoMarioneta.getAlto();
+                }
+                c.jugadorSalto(m_intMaxAltura);
+                
+                if(m_bEstaCayendo){
+                    m_bEstaCayendo=false;
+                }
             }
+            
         }
-        return e;
     }
     
     @Override
@@ -71,15 +77,15 @@ public class ControlJugador extends Controlador{
     }
     
     public void MovimientoDeSalto(){
-        m_intVelocidadCaida = m_elementoMarioneta.getCy()/32;
-        m_intVelocidadCaida = 1;
         if(m_bEstaCayendo)  {
+            m_intVelocidadCaida = m_elementoMarioneta.getCy()/32;
             m_elementoMarioneta.addCy(m_intVelocidadCaida);
         }  
         else{
+            m_intVelocidadCaida = m_elementoMarioneta.getCy()/32;
             m_elementoMarioneta.addCy(-(m_intVelocidadCaida));
         }
-        if(m_elementoMarioneta.getCy() < ((m_intAltoVentana/3)-(m_elementoMarioneta.getSprite().getHeight(null)/2))){
+        if(m_elementoMarioneta.getCy() < m_intMaxAltura){
             m_bEstaCayendo = true;
         } else if(m_elementoMarioneta.getCy() > m_intAltoVentana-m_elementoMarioneta.getSprite().getHeight(null)){
             m_bEstaCayendo = false;

@@ -5,6 +5,7 @@
  */
 package elementos;
 
+import controles.ControladorPlataforma;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -174,18 +175,19 @@ public class Elemento {
         calcularLimites();
     }
     
-    public Elemento probarColision(Elemento[] plataformasEstaticas){
-        for(Elemento e : plataformasEstaticas){
-            if(e!=null){
-                if(!getbHayColision() && getLimites().intersects(e.getLimites()) ){
+    public ControladorPlataforma probarColision(ControladorPlataforma[] ctrlPlataformasEstaticas){
+        for(ControladorPlataforma c : ctrlPlataformasEstaticas){
+            if(c!=null){
+                if(!getbHayColision() && getLimites().intersects(c.m_elementoMarioneta.getLimites()) ){
                     
                     setbHayColision(true);
-                    if(e.getCy() > getCy()){
-                        return e;
-                        
+                    if(c.m_elementoMarioneta.getCy() > getCy()){
+                        return c;
                     }
                     return null;
-                } else if(getLimites().intersects(e.getLimites())){
+                }
+                 
+                if(!getLimites().intersects(c.m_elementoMarioneta.getLimites())){
                     setbHayColision(false);
                 }
                 
