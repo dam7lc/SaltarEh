@@ -20,14 +20,19 @@ import java.util.Random;
 import ui.MenuPausa;
 import ui.MenuPrincipal;
 
-
+/**
+ * 
+ * @author dam7l
+ */
 public class Mundo extends JPanel implements Runnable {
-    private final int m_intDelay = 25;
+    private final int m_intDelay = 16;
+    private float m_floatDeltaTime;
     private final int m_intAnchoVentana;
     private final int m_intAltoVentana;
     private final int m_intNumeroEnemigos;
     private final int m_intNumeroPlataformasEstaticas;
     private final int m_intNumeroPlataformasDinamicas;
+    private float m_floatTiempoAnterior;
     private final int m_intNumeroPlataformasFragiles;
     private boolean m_bJuegoIniciado;
     private ControlJugador  m_ctrlJugador;
@@ -39,6 +44,13 @@ public class Mundo extends JPanel implements Runnable {
     private MenuPausa m_menuPausa;
     private boolean m_bJuegoPausado;
     
+    /**
+     * Constructor de la clase Mundo que se encarga de controlar todo lo 
+     * relacionado al juego
+     * @param anchoVentana El ancho en pixeles de la ventana donde se muestra el juego
+     * @param altoVentana El alto el pixeles de la ventana donde se muestra el juego
+     * @param ventana Referencia al JFrame donde se ejecuta el juego
+     */
     public Mundo(int anchoVentana, int altoVentana, SaltarEh ventana){
         m_intAnchoVentana = anchoVentana;
         m_intAltoVentana = altoVentana;
@@ -46,12 +58,17 @@ public class Mundo extends JPanel implements Runnable {
         m_bJuegoPausado = false;
         m_Ventana = ventana;
         m_intNumeroEnemigos = 1 ;
-        m_intNumeroPlataformasEstaticas = 5;
+        m_intNumeroPlataformasEstaticas = 10;
         m_intNumeroPlataformasDinamicas = 1;
         m_intNumeroPlataformasFragiles = 2;
         IniciarMundo();
     }
     
+    /**
+     * Metodo llamado desde el contructor, encargado de iniciar las variables,
+     * llamar ConfigurarControles() y añadir listener para el click y movimiento 
+     * del mouse
+     */
     private void IniciarMundo(){
         
         m_menuPrincipal = new MenuPrincipal(m_intAnchoVentana, m_intAltoVentana, true);
@@ -64,6 +81,11 @@ public class Mundo extends JPanel implements Runnable {
         this.addMouseMotionListener(mouseMotionl);
     }
     
+    /**
+     * Metodo llamado al seleccionar la opcion "Jugar" del menú principal,
+     * intercambia ui entre menu principal al menu de juego/pausa, resetea el doodle
+     * e inicializa las plataformas
+     */
     public void IniciarPartida(){
         m_bJuegoIniciado = true;
         m_menuPrincipal.setbEstaActivo(false);
@@ -76,13 +98,29 @@ public class Mundo extends JPanel implements Runnable {
         for(int i = 0; i < m_intNumeroPlataformasEstaticas; i++){
             m_ctrlPlataformas[i] = new ControladorPlataforma(
                     m_intAnchoVentana,
-                    m_intAltoVentana
+                    m_intAltoVentana,
+                    this
             );
+        }
+        m_floatTiempoAnterior = System.nanoTime();
+    }
+    
+    /**
+     * Metodo que se encarga de detener las plataformas cuando han llegado a su 
+     * destino despues de que el doodle realiza un salto valido
+     */
+    public void detenerPlataformas(){
+        if(m_ctrlPlataformas != null){
+            
+            for(ControladorPlataforma c : m_ctrlPlataformas){
+                c.setbPuedeMoverse(false);
+            }
         }
     }
     
+    //Metodo que añade los listeners al presionar las teclas a y d o flecha izquierda y derecha
     public void ConfigurarControles(){
-        m_ctrlJugador = new ControlJugador(m_intAnchoVentana, m_intAltoVentana);
+        m_ctrlJugador = new ControlJugador(m_intAnchoVentana, m_intAltoVentana, this);
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "MoverIzq");
         getActionMap().put("MoverIzq", m_ctrlJugador.moverIzq); 
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "MoverDer");
@@ -101,6 +139,9 @@ public class Mundo extends JPanel implements Runnable {
         getActionMap().put("MoverDerSoltado", m_ctrlJugador.moverDerSoltado); 
     }
     
+    /**
+     * Metodo que añade el hilo de ejecución 
+    */
     @Override
     public void addNotify(){
         super.addNotify();
@@ -109,13 +150,20 @@ public class Mundo extends JPanel implements Runnable {
     }
    
     
-    
+    /**
+     * Metodo que se encarga de pintar los objetos en pantalla
+     * @param g Clase Graphics que pinta los elementos en pantalla
+     */
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         drawImage(g);
     }
     
+    /**
+     * Metodo llamado desde paintComponent que delega pintar a cada elemento
+     * @param g Clase Graphics que pinta los elementos en pantalla
+     */
     private void drawImage(Graphics g){
         if(m_ctrlJugador.m_elementoMarioneta != null){      
             m_ctrlJugador.m_elementoMarioneta.Dibujar(g);
@@ -135,17 +183,33 @@ public class Mundo extends JPanel implements Runnable {
     }
     
     
-    
+    /**
+     * Metodo que se ejecuta en cada cuadro del videojuego, utilizado para mover
+     * los elementos que se muestran
+     */
     private void cycle(){
+        m_floatDeltaTime = System.nanoTime() - m_floatTiempoAnterior;
         if(!m_bJuegoPausado){
             m_ctrlJugador.Mover();
+            if(m_ctrlPlataformas!=null){
+                for(ControladorPlataforma c : m_ctrlPlataformas){
+                    if(c!=null){
+                        c.Mover();
+                    }
+                }
+            }
             if(m_bJuegoIniciado){
                 m_ctrlJugador.probarColision(m_ctrlPlataformas);
             }
             
         }
+        m_floatTiempoAnterior = System.nanoTime();
     }
     
+    /**
+     * Metodo que implementa como va a correr el hilo encargado de realizar la 
+     * ejecucion del juego
+     */
     @Override
     public void run(){
         long beforeTime, timeDiff, sleep;
@@ -154,7 +218,6 @@ public class Mundo extends JPanel implements Runnable {
         while(true){
             cycle();
             repaint();
-            
             timeDiff = System.currentTimeMillis() - beforeTime;
             sleep = m_intDelay - timeDiff;
             
@@ -163,7 +226,7 @@ public class Mundo extends JPanel implements Runnable {
             }
             
             try{
-                Thread.sleep(sleep);
+                m_threadAnimator.sleep(sleep);
             } catch(InterruptedException e){
                 String msg = String.format("Thread interrupted: %s", e.getMessage());
                 JOptionPane.showMessageDialog(
@@ -176,6 +239,7 @@ public class Mundo extends JPanel implements Runnable {
             beforeTime = System.currentTimeMillis();
         }
     }
+    
     
     MouseListener mousel = new MouseAdapter(){
         @Override 
@@ -221,6 +285,13 @@ public class Mundo extends JPanel implements Runnable {
         }
     };
     
+    /**
+     * Funcion encargada de comprobar si hay colision entre un objeto y el mouse
+     * 
+     * @param cX coordenada en x del mouse
+     * @param cY coordenada en y del mouse 
+     * @return El elemento con el que hay colison o null si no hay elemento
+     */
     private Elemento buscarElementoColision(int cX, int cY){
         if(m_menuPrincipal.getbEstaActivo()){
             return m_menuPrincipal.buscarElementoColision(cX, cY);
@@ -231,6 +302,19 @@ public class Mundo extends JPanel implements Runnable {
         return null;
     }
     
-   
-       
+    public float getDeltaTime(){
+        float delta = m_floatDeltaTime/1000000000;
+        if(delta > 0){
+            delta = 0.016f;
+        }
+        return delta;
+    }
+    
+    public ControladorPlataforma[] getCtrlPlataformas(){
+        return m_ctrlPlataformas;
+    }
+    
+    public ControlJugador getCtrlJugador(){
+        return m_ctrlJugador;
+    }
 }

@@ -6,6 +6,7 @@
 package controles;
 
 import elementos.Elemento;
+import saltareh.Mundo;
 
 /**
  *
@@ -17,6 +18,15 @@ public abstract class Controlador {
     public Boolean m_bSeMueveIzquierda = false;
     public Boolean m_bEstaCayendo = false;
     public Elemento m_elementoMarioneta;
+    Mundo m_mundoJuego;
+        
+    public Controlador(int anchoVentana, int altoVentana, Mundo mundo){
+        m_intAnchoVentana = anchoVentana;
+        m_intAltoVentana = altoVentana;
+        m_mundoJuego = mundo;
+    }
+    
     public abstract void Mover();
+
    
 }

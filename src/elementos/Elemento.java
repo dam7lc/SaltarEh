@@ -23,8 +23,8 @@ public class Elemento {
     protected String m_stringNombre;
     protected Image m_imgSprite;
     protected Image m_imgSpriteSobre;
-    protected int m_intCx;
-    protected int m_intCy;
+    protected float m_floatCx;
+    protected float m_floatCy;
     protected int m_intAncho;
     protected int m_intAlto;
     protected Rectangle m_rectLimites;
@@ -81,14 +81,14 @@ public class Elemento {
         
         if(m_bMouseSobre && m_imgSpriteSobre != null){
             if(m_bEsSpriteAjustada){
-                g.drawImage(m_imgSpriteSobre, m_intCx+((int)(getAncho()*.1f)/2), m_intCy+((int)(getAlto()*.1f)/2), null);
+                g.drawImage(m_imgSpriteSobre, Math.round(m_floatCx)+((int)(getAncho()*.1f)/2), Math.round(m_floatCy)+((int)(getAlto()*.1f)/2), null);
             }
             else {
-                g.drawImage(m_imgSpriteSobre, m_intCx, m_intCy, null);
+                g.drawImage(m_imgSpriteSobre, Math.round(m_floatCx), Math.round(m_floatCy), null);
             }
         }
         else{
-            g.drawImage(m_imgSprite, m_intCx, m_intCy, null);
+            g.drawImage(m_imgSprite, Math.round(m_floatCx), Math.round(m_floatCy), null);
         }
     }
     
@@ -141,8 +141,8 @@ public class Elemento {
     
     public void calcularLimites(){
         m_rectLimites = new Rectangle( 
-                getCx(),
-                getCy(),
+                Math.round(getCx()),
+                Math.round(getCy()),
                 getSprite().getWidth(null),
                 getSprite().getHeight(null)
         );
@@ -197,35 +197,33 @@ public class Elemento {
         return null;
     }
 
-    public int getCx() {
-        return m_intCx;
+    public float getCx() {
+        return m_floatCx;
     }
 
-    public void setCx(int cx) {
-        this.m_intCx = cx;
+    public void setCx(float cx) {
+        this.m_floatCx = cx;
     }
 
-    public int getCy() {
-        return m_intCy;
+    public float getCy() {
+        return m_floatCy;
     }
 
-    public void setCy(int cy) {
-        this.m_intCy = cy;
+    public void setCy(float cy) {
+        this.m_floatCy = cy;
     }
     
-    public void addCx(int cx) {
-        this.m_intCx += cx;
+    public void addCx(float cx) {
+        this.m_floatCx += cx;
     }
     
-    public void addCy(int cy) {
-        this.m_intCy += cy;
+    public void addCy(float cy) {
+        this.m_floatCy += cy;
     }
     
     public String getName(){
         return m_stringNombre;
     }
-    
-    
 
     public boolean getbHayColision() {
         return m_bHayColision;

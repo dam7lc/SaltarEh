@@ -12,6 +12,7 @@ import java.util.Random;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import saltareh.Mundo;
 
 /**
  *
@@ -19,40 +20,35 @@ import javax.swing.ImageIcon;
  */
 public class ControlJugador extends Controlador{
     
-    private int m_intVelocidadCaida;
+    private float m_floatVelocidadCaida;
     private int m_intAlturaSalto;
-    private int m_intMaxAltura;
+    private int m_intVelocidadLateral;
     
-    public ControlJugador(int anchoVentana, int alturaVentana){
-        
+    public ControlJugador(int anchoVentana, int altoVentana, Mundo mundo){
+        super(anchoVentana, altoVentana, mundo);
         m_elementoMarioneta = new Elemento(
                 "Personaje ",
                 anchoVentana/2, 
-                alturaVentana, 
+                altoVentana, 
                 "src/resources/Doodle.png", 
                 null,
                 anchoVentana/20, 
                 anchoVentana/20
         );
-        m_intAnchoVentana = anchoVentana;
-        m_intAltoVentana = alturaVentana;
-        m_intAlturaSalto = m_elementoMarioneta.getCy()-((m_intAltoVentana/2)+m_elementoMarioneta.getAlto());
-        m_intMaxAltura = m_intAlturaSalto;
+        m_intAlturaSalto = m_intAltoVentana/3 - m_elementoMarioneta.getAlto();
     }
     
     public void probarColision(ControladorPlataforma[] ctrlPlataformasEstaticas){
         if(ctrlPlataformasEstaticas != null){
             ControladorPlataforma c = m_elementoMarioneta.probarColision(ctrlPlataformasEstaticas);
             if(c!=null && m_elementoMarioneta.getbHayColision() && m_bEstaCayendo){
-                m_intMaxAltura = m_intAlturaSalto - (m_intAltoVentana - c.m_elementoMarioneta.getCy());
-                if(m_intMaxAltura < m_intAltoVentana/4-(m_elementoMarioneta.getAlto())){
-                    m_intMaxAltura = m_intAltoVentana/4 - m_elementoMarioneta.getAlto();
-                }
-                c.jugadorSalto(m_intMaxAltura);
                 
-                if(m_bEstaCayendo){
-                    m_bEstaCayendo=false;
-                }
+                
+                m_floatVelocidadCaida = m_intAltoVentana/2;
+                c.jugadorSalto(m_elementoMarioneta.getCy());
+                m_bEstaCayendo = false;
+                
+                
             }
             
         }
@@ -60,12 +56,13 @@ public class ControlJugador extends Controlador{
     
     @Override
     public void Mover(){
+        m_intVelocidadLateral = (m_intAnchoVentana/102);
         MovimientoDeSalto();
         if(m_bSeMueveDerecha){
-            m_elementoMarioneta.addCx(m_intAnchoVentana/91);
+            m_elementoMarioneta.addCx(m_intVelocidadLateral);
         }
         if(m_bSeMueveIzquierda){
-            m_elementoMarioneta.addCx(-(m_intAnchoVentana/91));
+            m_elementoMarioneta.addCx(-(m_intVelocidadLateral));
         }
         if(m_elementoMarioneta.getCx() > m_intAnchoVentana){
             m_elementoMarioneta.setCx(0);
@@ -77,17 +74,14 @@ public class ControlJugador extends Controlador{
     }
     
     public void MovimientoDeSalto(){
-        if(m_bEstaCayendo)  {
-            m_intVelocidadCaida = m_elementoMarioneta.getCy()/32;
-            m_elementoMarioneta.addCy(m_intVelocidadCaida);
-        }  
-        else{
-            m_intVelocidadCaida = m_elementoMarioneta.getCy()/32;
-            m_elementoMarioneta.addCy(-(m_intVelocidadCaida));
-        }
-        if(m_elementoMarioneta.getCy() < m_intMaxAltura){
+                
+        m_floatVelocidadCaida -= 9;
+        m_elementoMarioneta.addCy(-(m_floatVelocidadCaida*m_mundoJuego.getDeltaTime()));
+        if(m_floatVelocidadCaida < -350 ){
             m_bEstaCayendo = true;
-        } else if(m_elementoMarioneta.getCy() > m_intAltoVentana-m_elementoMarioneta.getSprite().getHeight(null)){
+        }
+        if(m_elementoMarioneta.getCy() > m_intAltoVentana-m_elementoMarioneta.getSprite().getHeight(null)){
+            m_floatVelocidadCaida = m_intAltoVentana;
             m_bEstaCayendo = false;
         }
     }
@@ -119,4 +113,13 @@ public class ControlJugador extends Controlador{
             m_bSeMueveDerecha = false;
         }
     };
+    
+    public float getVelocidad(){
+        return m_floatVelocidadCaida;
+    }
+    public void setVelocidad(float velocidad){
+        m_floatVelocidadCaida = velocidad;
+    }
+    
+    
 }
