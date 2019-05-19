@@ -20,6 +20,7 @@ public class ControladorPlataforma extends Controlador {
     float m_floatNuevoCy;
     boolean m_bPuedeMoverse = false;
     float m_floatVelocidad;
+    float m_floatAceleracion;
     Random generadorRandom;
     
     public ControladorPlataforma(int anchoVentana, int altoVentana, Mundo mundo){
@@ -45,7 +46,7 @@ public class ControladorPlataforma extends Controlador {
         if(m_bPuedeMoverse){
             
           
-            m_floatVelocidad -= 9;
+            m_floatVelocidad += m_floatAceleracion;
             for(ControladorPlataforma c : m_mundoJuego.getCtrlPlataformas()){
                 
                 c.m_elementoMarioneta.addCy(m_floatVelocidad*m_mundoJuego.getDeltaTime());
@@ -64,37 +65,37 @@ public class ControladorPlataforma extends Controlador {
     }
     
     public void jugadorSalto(float cy){
-        
+         
         m_floatNuevoCy = m_intAltoVentana - (m_intAltoVentana/8.0f);
-        
         
         if(m_floatNuevoCy < m_elementoMarioneta.getCy()){
             m_bPuedeMoverse = false;
-            m_mundoJuego.getCtrlJugador().setVelocidad(m_intAltoVentana);
+            //m_mundoJuego.getCtrlJugador().calcularVelocidad();
         }
         else{
-            float distancia = (m_elementoMarioneta.getCy() - m_floatNuevoCy);
+            float distancia = (m_floatNuevoCy - m_elementoMarioneta.getCy());
+            
             boolean calcular = true;
             float supuestaVelocidad = m_mundoJuego.getCtrlJugador().getVelocidad();
-            float tiempo = 0, delta = m_mundoJuego.getDeltaTime();
-            while(calcular){
-                cy -= supuestaVelocidad;
-                tiempo+=delta;
-                supuestaVelocidad-=9;
-                if(supuestaVelocidad < 0){
-                    calcular = false;
-                }
-            }
-            System.out.println(tiempo);
-            m_floatVelocidad = m_intAnchoVentana;
+            float tiempo = 1;
+            //Distancia/tiempo = velocidad promedio
+            //(Velocidad promedio*2)-velocidad final = velocidad inicial 
+            //aceleracion = (velociad final - velocidad inicial) / (tiempo final - tiempo inicial)
+            
+            float velocidadPromedio = distancia / tiempo;
+            float velocidadInicial = (velocidadPromedio*2) -0;
+            float aceleracion = (0 - velocidadInicial) / (tiempo - 0);
+            
+            m_floatVelocidad = velocidadInicial;
+            m_floatAceleracion = aceleracion * m_mundoJuego.getDeltaTime();
             m_bPuedeMoverse = true;
         }
         
     }
     
-    public void setVelocidad(float velocidad){
+    /*public void setVelocidad(float velocidad){
         m_floatVelocidad = velocidad;
-    }
+    }*/
     
     public void setbPuedeMoverse(boolean puede){
         m_bPuedeMoverse = puede;

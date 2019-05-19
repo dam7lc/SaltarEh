@@ -22,6 +22,7 @@ public class ControlJugador extends Controlador{
     
     private float m_floatVelocidadCaida;
     private int m_intAlturaSalto;
+    private float m_floatAceleracionCaida;
     private int m_intVelocidadLateral;
     
     public ControlJugador(int anchoVentana, int altoVentana, Mundo mundo){
@@ -42,16 +43,23 @@ public class ControlJugador extends Controlador{
         if(ctrlPlataformasEstaticas != null){
             ControladorPlataforma c = m_elementoMarioneta.probarColision(ctrlPlataformasEstaticas);
             if(c!=null && m_elementoMarioneta.getbHayColision() && m_bEstaCayendo){
-                
-                
-                m_floatVelocidadCaida = m_intAltoVentana/2;
-                c.jugadorSalto(m_elementoMarioneta.getCy());
-                m_bEstaCayendo = false;
-                
-                
+                calcularVelocidad();
+                c.jugadorSalto(m_elementoMarioneta.getCy()); 
             }
-            
         }
+    }
+    
+    public void calcularVelocidad(){
+        float distancia = m_elementoMarioneta.getCy() - ((m_intAltoVentana/3));
+        
+        m_floatVelocidadCaida = (distancia) * 2;
+        m_floatAceleracionCaida = (-(m_floatVelocidadCaida)) * m_mundoJuego.getDeltaTime();
+        System.out.println( " posicion: " + m_elementoMarioneta.getCy() +
+                " distancia: " + distancia + 
+                " velocidad: " + m_floatVelocidadCaida*m_mundoJuego.getDeltaTime() + 
+                " veces: " + 1/m_mundoJuego.getDeltaTime()
+        );
+        m_bEstaCayendo = false;
     }
     
     @Override
@@ -75,14 +83,15 @@ public class ControlJugador extends Controlador{
     
     public void MovimientoDeSalto(){
                 
-        m_floatVelocidadCaida -= 9;
+        m_floatVelocidadCaida += m_floatAceleracionCaida;
         m_elementoMarioneta.addCy(-(m_floatVelocidadCaida*m_mundoJuego.getDeltaTime()));
-        if(m_floatVelocidadCaida < -350 ){
+        if(m_floatVelocidadCaida < 0 ){
             m_bEstaCayendo = true;
+            m_floatAceleracionCaida = -9;
         }
         if(m_elementoMarioneta.getCy() > m_intAltoVentana-m_elementoMarioneta.getSprite().getHeight(null)){
-            m_floatVelocidadCaida = m_intAltoVentana;
-            m_bEstaCayendo = false;
+            
+            calcularVelocidad();
         }
     }
     
