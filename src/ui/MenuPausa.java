@@ -31,8 +31,8 @@ public class MenuPausa extends Menu{
                 "src/resources/btnSalir.png",
                 "src/resources/btnSalirHover.png",
                 m_intAnchoVentana/35,
-                m_intAnchoVentana/35
-                   
+                m_intAnchoVentana/35,
+                null   
         );
        
         m_elementoTextoPausa = new Elemento(
@@ -42,7 +42,8 @@ public class MenuPausa extends Menu{
                 "src/resources/textPausa.png",
                 null,
                 (m_intAnchoVentana/3),
-                m_intAnchoVentana/12
+                m_intAnchoVentana/12,
+                null
         );
 
         m_elementoOpcionPausa = new Elemento(
@@ -52,7 +53,8 @@ public class MenuPausa extends Menu{
                 "src/resources/btnPausa.jpg",
                 "src/resources/btnPausaHover.jpg",
                 m_intAnchoVentana/35,
-                m_intAnchoVentana/35
+                m_intAnchoVentana/35,
+                null
         );
         
         m_elementoOpcionPausa.setbEsClickeable(true);

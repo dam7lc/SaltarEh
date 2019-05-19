@@ -33,7 +33,8 @@ public class MenuPrincipal extends Menu{
                 "src/resources/btnSalir.png",
                 "src/resources/btnSalirHover.png",
                 m_intAnchoVentana/35,
-                m_intAnchoVentana/35
+                m_intAnchoVentana/35,
+                null
         );
         m_elementoOpcionSalir.setbEsClickeable(true);
         
@@ -44,7 +45,8 @@ public class MenuPrincipal extends Menu{
                 "src/resources/btnJugar.png",
                 null,
                 (m_intAnchoVentana/6),
-                m_intAnchoVentana/12
+                m_intAnchoVentana/12,
+                null
         );
         m_elementoOpcionJugar.setbEsClickeable(true);
         m_elementoOpcionJugar.pintar(Color.black);
@@ -56,7 +58,8 @@ public class MenuPrincipal extends Menu{
                 "src/resources/textAjustes.png",
                 null,
                 (m_intAnchoVentana/6),
-                m_intAnchoVentana/18
+                m_intAnchoVentana/18,
+                null
         );
         m_elementoOpcionAjustes.setbEsClickeable(true);
         m_elementoOpcionAjustes.pintar(Color.black);

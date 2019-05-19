@@ -5,7 +5,10 @@
  */
 package elementos;
 
-import controles.ControladorPlataforma;
+import controles.Control;
+import controles.ControlPlataforma;
+import controles.ControlPlataformaDinamica;
+import controles.ControlPlataformaEstatica;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -21,6 +24,7 @@ import javax.swing.ImageIcon;
  */
 public class Elemento {
     protected String m_stringNombre;
+    protected Control m_ctrlControl;
     protected Image m_imgSprite;
     protected Image m_imgSpriteSobre;
     protected float m_floatCx;
@@ -32,15 +36,19 @@ public class Elemento {
     protected boolean m_bHayColision;protected boolean m_bEsSpriteAjustada = false;
     protected boolean m_bEsClickeable = false;
     
-    public Elemento(String nombre, int x, int y, String imgSrc, String imgHoverSrc, int ancho, int alto){
-        Iniciar(nombre, x, y, imgSrc, imgHoverSrc, ancho, alto);
+    public Elemento(String nombre, int x, int y, String imgSrc, String imgHoverSrc, int ancho, int alto, Control ctrl){
+        Iniciar(nombre, x, y, imgSrc, imgHoverSrc, ancho, alto, ctrl);
         m_bMouseSobre = false;
+        
     }
+
     
-    private void Iniciar(String nombre, int x, int y, String imgSrc, String imgHoverSrc, int ancho, int alto){
+    
+    private void Iniciar(String nombre, int x, int y, String imgSrc, String imgHoverSrc, int ancho, int alto, Control ctrl){
         m_stringNombre = nombre;
         setCx(x);
         setCy(y);
+        setControl(ctrl);
         setAncho(ancho);
         setAlto(alto);
         ImageIcon icon = new ImageIcon(imgSrc);
@@ -140,12 +148,15 @@ public class Elemento {
     }
     
     public void calcularLimites(){
-        m_rectLimites = new Rectangle( 
+        if(getSprite()!=null){
+            m_rectLimites = new Rectangle( 
                 Math.round(getCx()),
                 Math.round(getCy()),
                 getSprite().getWidth(null),
                 getSprite().getHeight(null)
-        );
+            );
+        }
+        
     }
     
     public void pintar(Color c){
@@ -175,8 +186,8 @@ public class Elemento {
         calcularLimites();
     }
     
-    public ControladorPlataforma probarColision(ControladorPlataforma[] ctrlPlataformasEstaticas){
-        for(ControladorPlataforma c : ctrlPlataformasEstaticas){
+    public ControlPlataforma probarColision(){
+        for(ControlPlataformaEstatica c : getControl().getMundo().getCtrlPlataformasEstaticas()){
             if(c!=null){
                 if(!getbHayColision() && getLimites().intersects(c.m_elementoMarioneta.getLimites()) ){
                     
@@ -193,7 +204,23 @@ public class Elemento {
                 
             }
         }
-        
+        for(ControlPlataformaDinamica c : getControl().getMundo().getCtrlPlataformasDinamicas()){
+            if(c!=null){
+                if(!getbHayColision() && getLimites().intersects(c.m_elementoMarioneta.getLimites()) ){
+                    
+                    setbHayColision(true);
+                    if(c.m_elementoMarioneta.getCy() > getCy()){
+                        return c;
+                    }
+                    return null;
+                }
+                 
+                if(!getLimites().intersects(c.m_elementoMarioneta.getLimites())){
+                    setbHayColision(false);
+                }
+                
+            }
+        }
         return null;
     }
 
@@ -203,6 +230,7 @@ public class Elemento {
 
     public void setCx(float cx) {
         this.m_floatCx = cx;
+        calcularLimites();
     }
 
     public float getCy() {
@@ -211,14 +239,18 @@ public class Elemento {
 
     public void setCy(float cy) {
         this.m_floatCy = cy;
+        
+        calcularLimites();
     }
     
     public void addCx(float cx) {
         this.m_floatCx += cx;
+        calcularLimites();
     }
     
     public void addCy(float cy) {
         this.m_floatCy += cy;
+        calcularLimites();
     }
     
     public String getName(){
@@ -232,5 +264,11 @@ public class Elemento {
     public void setbHayColision(boolean m_bHayColision) {
         this.m_bHayColision = m_bHayColision;
     }
-    
+    public Control getControl() {
+        return m_ctrlControl;
+    }
+
+    public void setControl(Control ctrl) {
+        this.m_ctrlControl = ctrl;
+    }
 }

@@ -1,8 +1,9 @@
 package saltareh;
 
 import controles.ControlJugador;
+import controles.ControlPlataformaDinamica;
 import controles.ControladorEnemigo;
-import controles.ControladorPlataforma;
+import controles.ControlPlataformaEstatica;
 import elementos.Elemento;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,7 +38,9 @@ public class Mundo extends JPanel implements Runnable {
     private boolean m_bJuegoIniciado;
     private ControlJugador  m_ctrlJugador;
     private ControladorEnemigo[] m_ctrlEnemigos;
-    private ControladorPlataforma[] m_ctrlPlataformas;
+    private ControlPlataformaEstatica[] m_ctrlPlataformasEstaticas;
+    
+    private ControlPlataformaDinamica[] m_ctrlPlataformasDinamicas;
     private Thread m_threadAnimator;
     private final SaltarEh m_Ventana;
     private MenuPrincipal m_menuPrincipal;
@@ -58,9 +61,9 @@ public class Mundo extends JPanel implements Runnable {
         m_bJuegoPausado = false;
         m_Ventana = ventana;
         m_intNumeroEnemigos = 1 ;
-        m_intNumeroPlataformasEstaticas = 10;
-        m_intNumeroPlataformasDinamicas = 1;
-        m_intNumeroPlataformasFragiles = 2;
+        m_intNumeroPlataformasEstaticas = 3;
+        m_intNumeroPlataformasDinamicas = 2;
+        m_intNumeroPlataformasFragiles = 1;
         IniciarMundo();
     }
     
@@ -94,9 +97,17 @@ public class Mundo extends JPanel implements Runnable {
                 m_intAltoVentana+m_ctrlJugador.m_elementoMarioneta.getSprite().getHeight(null)
         );
         m_Ventana.Jugar();
-        m_ctrlPlataformas = new ControladorPlataforma[m_intNumeroPlataformasEstaticas]; 
+        m_ctrlPlataformasEstaticas = new ControlPlataformaEstatica[m_intNumeroPlataformasEstaticas]; 
+        m_ctrlPlataformasDinamicas = new ControlPlataformaDinamica[m_intNumeroPlataformasDinamicas]; 
         for(int i = 0; i < m_intNumeroPlataformasEstaticas; i++){
-            m_ctrlPlataformas[i] = new ControladorPlataforma(
+            m_ctrlPlataformasEstaticas[i] = new ControlPlataformaEstatica(
+                    m_intAnchoVentana,
+                    m_intAltoVentana,
+                    this
+            );
+        }
+        for(int i = 0; i < m_intNumeroPlataformasDinamicas; i++){
+            m_ctrlPlataformasDinamicas[i] = new ControlPlataformaDinamica(
                     m_intAnchoVentana,
                     m_intAltoVentana,
                     this
@@ -110,9 +121,9 @@ public class Mundo extends JPanel implements Runnable {
      * destino despues de que el doodle realiza un salto valido
      */
     public void detenerPlataformas(){
-        if(m_ctrlPlataformas != null){
+        if(m_ctrlPlataformasEstaticas != null){
             
-            for(ControladorPlataforma c : m_ctrlPlataformas){
+            for(ControlPlataformaEstatica c : m_ctrlPlataformasEstaticas){
                 c.setbPuedeMoverse(false);
             }
         }
@@ -173,7 +184,13 @@ public class Mundo extends JPanel implements Runnable {
         }
         else{
             m_menuPausa.Dibujar(g);
-            for(ControladorPlataforma c : m_ctrlPlataformas){
+            for(ControlPlataformaEstatica c : m_ctrlPlataformasEstaticas){
+                if(c != null){
+                    c.m_elementoMarioneta.Dibujar(g);
+                }
+            }
+            
+            for(ControlPlataformaDinamica c : m_ctrlPlataformasDinamicas){
                 if(c != null){
                     c.m_elementoMarioneta.Dibujar(g);
                 }
@@ -191,15 +208,20 @@ public class Mundo extends JPanel implements Runnable {
         m_floatDeltaTime = System.nanoTime() - m_floatTiempoAnterior;
         if(!m_bJuegoPausado){
             m_ctrlJugador.Mover();
-            if(m_ctrlPlataformas!=null){
-                for(ControladorPlataforma c : m_ctrlPlataformas){
+            if(m_ctrlPlataformasEstaticas!=null && m_ctrlPlataformasDinamicas != null){
+                for(ControlPlataformaEstatica c : m_ctrlPlataformasEstaticas){
+                    if(c!=null){
+                        c.Mover();
+                    }
+                }
+                for(ControlPlataformaDinamica c : m_ctrlPlataformasDinamicas){
                     if(c!=null){
                         c.Mover();
                     }
                 }
             }
             if(m_bJuegoIniciado){
-                m_ctrlJugador.probarColision(m_ctrlPlataformas);
+                m_ctrlJugador.probarColision(m_ctrlPlataformasEstaticas);
             }
             
         }
@@ -310,8 +332,12 @@ public class Mundo extends JPanel implements Runnable {
         return delta;
     }
     
-    public ControladorPlataforma[] getCtrlPlataformas(){
-        return m_ctrlPlataformas;
+    public ControlPlataformaEstatica[] getCtrlPlataformasEstaticas(){
+        return m_ctrlPlataformasEstaticas;
+    }
+    
+    public ControlPlataformaDinamica[] getCtrlPlataformasDinamicas(){
+        return m_ctrlPlataformasDinamicas;
     }
     
     public ControlJugador getCtrlJugador(){

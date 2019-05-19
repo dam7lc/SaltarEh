@@ -37,15 +37,18 @@ public class SaltarEh extends JFrame{
      */
     private void IniciarUI(){
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        double ancho = screenSize.getWidth();
-        double alto = screenSize.getHeight();
-        double ratio = ancho/alto;
+//        double ancho = screenSize.getWidth();
+//        double alto = screenSize.getHeight();
+//        double ratio = ancho/alto;
+double ancho = 1280;
+double alto = 720;
         m_intAnchoVentana = (int)ancho;
+        
         m_intAltoVentana = (int)alto;
         setPreferredSize(new Dimension(m_intAnchoVentana, m_intAltoVentana));
-        setResizable(false);
-        setExtendedState(JFrame.MAXIMIZED_BOTH); 
-        setUndecorated(true);
+//        setResizable(false);
+//        setExtendedState(JFrame.MAXIMIZED_BOTH); 
+//        setUndecorated(true);
         setVisible(true);
         setTitle("Saltar Eh!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,6 +56,7 @@ public class SaltarEh extends JFrame{
         m_mundo = new Mundo(m_intAnchoVentana, m_intAltoVentana, this);
         add(m_mundo);
         m_mundo.setFocusable(false);
+        pack();
     }
     
     /**

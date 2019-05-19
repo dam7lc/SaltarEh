@@ -12,7 +12,7 @@ import saltareh.Mundo;
  *
  * @author dam7l
  */
-public abstract class Controlador {
+public abstract class Control {
     public int m_intAnchoVentana, m_intAltoVentana;
     public Boolean m_bSeMueveDerecha = false;
     public Boolean m_bSeMueveIzquierda = false;
@@ -20,7 +20,7 @@ public abstract class Controlador {
     public Elemento m_elementoMarioneta;
     Mundo m_mundoJuego;
         
-    public Controlador(int anchoVentana, int altoVentana, Mundo mundo){
+    public Control(int anchoVentana, int altoVentana, Mundo mundo){
         m_intAnchoVentana = anchoVentana;
         m_intAltoVentana = altoVentana;
         m_mundoJuego = mundo;
@@ -28,5 +28,7 @@ public abstract class Controlador {
     
     public abstract void Mover();
 
-   
+    public Mundo getMundo(){
+        return m_mundoJuego;
+    }
 }

@@ -6,7 +6,6 @@
 package controles;
 
 import elementos.Elemento;
-import elementos.Player;
 import java.awt.event.ActionEvent;
 import java.util.Random;
 import javax.swing.AbstractAction;
@@ -18,7 +17,7 @@ import saltareh.Mundo;
  *
  * @author dam7l
  */
-public class ControlJugador extends Controlador{
+public class ControlJugador extends Control{
     
     private float m_floatVelocidadCaida;
     private int m_intAlturaSalto;
@@ -34,17 +33,28 @@ public class ControlJugador extends Controlador{
                 "src/resources/Doodle.png", 
                 null,
                 anchoVentana/20, 
-                anchoVentana/20
+                anchoVentana/20,
+                this
         );
         m_intAlturaSalto = m_intAltoVentana/3 - m_elementoMarioneta.getAlto();
     }
     
-    public void probarColision(ControladorPlataforma[] ctrlPlataformasEstaticas){
+    public void probarColision(ControlPlataformaEstatica[] ctrlPlataformasEstaticas){
         if(ctrlPlataformasEstaticas != null){
-            ControladorPlataforma c = m_elementoMarioneta.probarColision(ctrlPlataformasEstaticas);
-            if(c!=null && m_elementoMarioneta.getbHayColision() && m_bEstaCayendo){
+            ControlPlataforma c = m_elementoMarioneta.probarColision();
+            if(c!=null){
+                System.out.println("tiempo: " + System.currentTimeMillis() + 
+                    " c es nulo " + (c == null) + 
+                   " HayColision " + m_elementoMarioneta.getbHayColision() + 
+                   " EstaCayendo " + m_bEstaCayendo + 
+                   " Esta debajo " + (c.m_elementoMarioneta.getCy() > (m_elementoMarioneta.getCy() + m_elementoMarioneta.getAlto()))
+                );
+            }
+           
+            if(c!=null && m_elementoMarioneta.getbHayColision() && m_bEstaCayendo && c.m_elementoMarioneta.getCy()+2 > (m_elementoMarioneta.getCy() + m_elementoMarioneta.getAlto())){
                 calcularVelocidad();
                 c.jugadorSalto(m_elementoMarioneta.getCy()); 
+                
             }
         }
     }
@@ -54,11 +64,7 @@ public class ControlJugador extends Controlador{
         
         m_floatVelocidadCaida = (distancia) * 2;
         m_floatAceleracionCaida = (-(m_floatVelocidadCaida)) * m_mundoJuego.getDeltaTime();
-        System.out.println( " posicion: " + m_elementoMarioneta.getCy() +
-                " distancia: " + distancia + 
-                " velocidad: " + m_floatVelocidadCaida*m_mundoJuego.getDeltaTime() + 
-                " veces: " + 1/m_mundoJuego.getDeltaTime()
-        );
+        
         m_bEstaCayendo = false;
     }
     
@@ -78,7 +84,6 @@ public class ControlJugador extends Controlador{
         if(m_elementoMarioneta.getCx() < 0){
             m_elementoMarioneta.setCx(m_intAnchoVentana);
         }
-        m_elementoMarioneta.calcularLimites();
     }
     
     public void MovimientoDeSalto(){
